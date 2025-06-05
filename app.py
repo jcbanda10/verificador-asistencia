@@ -8,7 +8,7 @@ st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", 
 
 # Título y logo
 st.markdown("<h1 style='text-align: center; color: navy;'>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
-st.image("logo.png", width=180)  # Asegúrate de tener "logo.png" en el mismo repositorio
+st.image("Logo.png", width=180)  # Asegúrate de tener "logo.png" en el mismo repositorio
 
 # Instrucciones
 st.info("""
