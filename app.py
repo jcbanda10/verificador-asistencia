@@ -42,7 +42,7 @@ st.markdown("""
 # Título y logo
 st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("Logo.png", width=280)
+st.image("Logo.png", width=280, layout="centered")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Descripción
