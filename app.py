@@ -10,7 +10,7 @@ st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", 
 st.markdown("""
     <style>
         .stApp {
-            background-color: #070808;
+            background-color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
         }
         h1 {
@@ -21,8 +21,8 @@ st.markdown("""
         .logo-container {
             display: flex;
             justify-content: center;
-            margin-top: -30px;
-            margin-bottom: 30px;
+            margin-top: -20px;
+            margin-bottom: 20px;
         }
         .stButton>button {
             background-color: #0b5394;
@@ -41,7 +41,7 @@ st.markdown("""
             background-color: #f3f7fc;
         }
         .stDataFrame {
-            background-color: #080707;
+            background-color: #ffffff;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -49,7 +49,7 @@ st.markdown("""
 # Título y logo
 st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("Logo.png", width=480)
+st.image("Logo.png", width=180)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Descripción
