@@ -6,20 +6,9 @@ from io import BytesIO
 # Configuración general de la app
 st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", layout="centered")
 
-# Estilo personalizado (sin fondo blanco)
+# Estilo personalizado
 st.markdown("""
     <style>
-        h1 {
-            color: #0b5394;
-            text-align: center;
-            margin-bottom: 0;
-        }
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            margin-top: -20px;
-            margin-bottom: 20px;
-        }
         .stButton>button {
             background-color: #0b5394;
             color: white;
@@ -39,20 +28,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Título y logo
+# 🖼️ Título con logo alineado a la izquierda
 st.markdown("""
     <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-        <img src="https://github.com/jcbanda10/verificador-asistencia/main/Logo.png" width="80" style="margin-right: 20px;">
+        <img src="Logo.png" width="80" style="margin-right: 20px;">
         <h1 style="color: #0b5394;">⏰ Verificador de Llegadas Tarde</h1>
     </div>
 """, unsafe_allow_html=True)
-
-"""
-st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
-st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("Logo.png", width=280)
-st.markdown('</div>', unsafe_allow_html=True)
-"""
 
 # Descripción
 st.info("""
