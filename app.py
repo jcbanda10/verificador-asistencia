@@ -22,7 +22,7 @@ st.markdown("""
         }
         .stButton>button {
             background-color: #0b5394;
-            color: black;
+            color: white;
             border-radius: 10px;
             padding: 0.5em 1em;
             font-size: 1rem;
@@ -34,7 +34,7 @@ st.markdown("""
             border: 2px dashed #0b5394;
             border-radius: 10px;
             padding: 1em;
-            background-color: #f3f7fc;
+            background-color: #02060a;
         }
     </style>
 """, unsafe_allow_html=True)
