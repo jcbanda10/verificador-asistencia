@@ -1,88 +1,86 @@
-import streamlit as st
 import pandas as pd
-import io
-from datetime import datetime, time
+from datetime import datetime
+import streamlit as st
+from io import BytesIO
 
-# Configuración de la página
-st.set_page_config(
-    page_title="Verificador de Asistencia",
-    page_icon="⏰",
-    layout="centered"
-)
+st.title("📊 Verificador de Llegadas Tarde")
+st.write("Sube tu archivo Excel con los registros de huella para analizar quién llegó tarde o no tiene registro.")
 
-# Encabezado y bienvenida
-st.markdown("<h1 style='text-align: center; color: navy;'>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
+archivo = st.file_uploader("📎 Cargar archivo Excel", type=["xlsx"])
 
-st.info("""
-Bienvenido al sistema de control de asistencias por franja horaria.
+# Turnos definidos por franja horaria
+turnos = {
+    "07:00": ("07:00", "07:40"),
+    "08:00": ("08:00", "08:40"),
+    "13:00": ("13:00", "13:40"),
+    "14:00": ("14:00", "14:40"),
+    "19:00": ("19:00", "19:40"),
+}
 
-📁 Solo necesitas subir el archivo Excel de los registros de huella dactilar.
+def identificar_turno(hora):
+    for inicio_str, (inicio, fin) in turnos.items():
+        h_inicio = datetime.strptime(inicio, "%H:%M").time()
+        h_fin = datetime.strptime(fin, "%H:%M").time()
+        if h_inicio <= hora.time() <= h_fin:
+            return inicio_str, h_inicio
+    return None, None
 
-✅ El sistema detectará automáticamente si los empleados llegaron tarde o no tienen registro, según su franja horaria.
+if archivo:
+    try:
+        df = pd.read_excel(archivo)
+        df = df[df['Evento'] == 'Desbloqueo de huellas']
+        df = df.dropna(subset=['Nombre', 'Hora'])
+        df['Hora'] = pd.to_datetime(df['Hora'])
+        df['Fecha'] = df['Hora'].dt.date
+        primeras = df.sort_values('Hora').groupby(['Nombre', 'Fecha']).first().reset_index()
 
-""")
+        resultado = []
+        for _, row in primeras.iterrows():
+            nombre = row['Nombre']
+            hora_llegada = row['Hora']
+            turno_detectado, hora_turno = identificar_turno(hora_llegada)
+            if turno_detectado:
+                llego_tarde = hora_llegada.time() > hora_turno
+                resultado.append({
+                    "Nombre": nombre,
+                    "Fecha": row['Fecha'],
+                    "Hora Llegada": hora_llegada.time(),
+                    "Turno": turno_detectado,
+                    "Llego Tarde": "Sí" if llego_tarde else "No"
+                })
 
-# Puedes mostrar un logo si tienes uno (descomenta la línea siguiente si lo subes)
-# st.image("logo.png", width=200)
+        resultado_df = pd.DataFrame(resultado)
 
-# Subida del archivo
-archivo = st.file_uploader("📁 Selecciona el archivo de huellas (.xlsx)", type=["xlsx"])
+        nombres_todos = df['Nombre'].dropna().unique()
+        nombres_con_llegada = resultado_df['Nombre'].unique()
+        nombres_sin_llegada = set(nombres_todos) - set(nombres_con_llegada)
+        fecha_unica = primeras['Fecha'].unique()[0] if not primeras.empty else datetime.today().date()
 
-if archivo is not None:
-    df = pd.read_excel(archivo)
+        faltantes = []
+        for nombre in nombres_sin_llegada:
+            faltantes.append({
+                "Nombre": nombre,
+                "Fecha": fecha_unica,
+                "Hora Llegada": None,
+                "Turno": None,
+                "Llego Tarde": "Sin registro"
+            })
 
-    # Limpiar y asegurar formato de columnas
-    df.columns = df.columns.str.strip()
-    df['Fecha'] = pd.to_datetime(df['Fecha'], errors='coerce')
-    df['Hora Llegada'] = pd.to_datetime(df['Hora Llegada'], errors='coerce').dt.time
+        faltantes_df = pd.DataFrame(faltantes)
+        reporte = pd.concat([resultado_df, faltantes_df], ignore_index=True)
+        reporte = reporte.sort_values(by=["Fecha", "Nombre"])
 
-    # Definir rangos de entrada por turno
-    franjas = {
-        "7:06 AM": time(7, 0),
-        "8:06 AM": time(8, 0),
-        "1:06 PM": time(13, 0),
-        "2:06 PM": time(14, 0),
-        "7:06 PM": time(19, 0),
-    }
+        st.success("✅ Análisis completado. Aquí tienes los resultados:")
+        st.dataframe(reporte)
 
-    tolerancia_minutos = 40
-
-    # Función para asignar franja
-    def asignar_turno(hora):
-        if pd.isnull(hora):
-            return None
-        for nombre_turno, hora_turno in franjas.items():
-            inicio = (datetime.combine(datetime.today(), hora_turno)).time()
-            fin = (datetime.combine(datetime.today(), hora_turno).replace(minute=hora_turno.minute + tolerancia_minutos)).time()
-            if hora >= inicio and hora <= fin:
-                return nombre_turno
-        return "Fuera de Rango"
-
-    df['Turno'] = df['Hora Llegada'].apply(asignar_turno)
-
-    def llego_tarde(row):
-        if pd.isnull(row['Hora Llegada']):
-            return "Sin Registro"
-        if row['Turno'] in franjas:
-            hora_referencia = franjas[row['Turno']]
-            return "Tarde" if row['Hora Llegada'] > hora_referencia else "A Tiempo"
-        return "Fuera de Rango"
-
-    df['Tardanza'] = df.apply(llego_tarde, axis=1)
-
-    # Mostrar tabla
-    st.subheader("📄 Reporte de Asistencias")
-    st.dataframe(df)
-
-    # Descargar resultado
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False, sheet_name='Reporte')
-    st.download_button(
-        label="📥 Descargar informe de asistencia",
-        data=output.getvalue(),
-        file_name='reporte_asistencia.xlsx',
-        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-else:
-    st.warning("Por favor, sube un archivo Excel para continuar.")
+        # Descargar como Excel
+        output = BytesIO()
+        reporte.to_excel(output, index=False, engine='openpyxl')
+        st.download_button(
+            label="⬇️ Descargar reporte en Excel",
+            data=output.getvalue(),
+            file_name="reporte_llegadas.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except Exception as e:
+        st.error(f"❌ Error procesando el archivo: {e}")
