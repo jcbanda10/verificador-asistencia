@@ -11,12 +11,12 @@ st.markdown("""
     <style>
         h1 {
             color: #0b5394;
-            text-align: center;
+            text-align: centered;
             margin-bottom: 0;
         }
         .logo-container {
             display: flex;
-            justify-content: centered;
+            justify-content: center;
             margin-top: -20px;
             margin-bottom: 20px;
         }
