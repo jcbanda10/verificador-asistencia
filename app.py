@@ -3,25 +3,65 @@ from datetime import datetime
 import streamlit as st
 from io import BytesIO
 
-# Configuración visual de la app
+# Configuración general de la app
 st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", layout="centered")
 
+# Estilo personalizado
+st.markdown("""
+    <style>
+        .stApp {
+            background-color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        h1 {
+            color: #0b5394;
+            text-align: center;
+            margin-bottom: 0;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-top: -20px;
+            margin-bottom: 20px;
+        }
+        .stButton>button {
+            background-color: #0b5394;
+            color: white;
+            border-radius: 10px;
+            padding: 0.5em 1em;
+            font-size: 1rem;
+        }
+        .stButton>button:hover {
+            background-color: #073763;
+        }
+        .stFileUploader {
+            border: 2px dashed #0b5394;
+            border-radius: 10px;
+            padding: 1em;
+            background-color: #f3f7fc;
+        }
+        .stDataFrame {
+            background-color: #ffffff;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Título y logo
-st.markdown("<h1 style='text-align: center; color: navy;'>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
-st.image("Logo.png", width=180)  # Asegúrate de tener "logo.png" en el mismo repositorio
+st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
+st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+st.image("Logo.png", width=180)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# Instrucciones
+# Descripción
 st.info("""
-Bienvenido al sistema de control de asistencias por franja horaria.
-
 📎 Sube tu archivo Excel con los registros de huella.  
-✅ El sistema detecta automáticamente quién llegó temprano, a tiempo, tarde o no tiene registro.
+El sistema detecta automáticamente quién llegó **temprano**, **a tiempo**, **tarde** o no tiene **registro**.
 """)
 
-# Carga de archivo
+# Subida del archivo
 archivo = st.file_uploader("📁 Cargar archivo Excel", type=["xlsx"])
 
-# Turnos por franja horaria (con tolerancia)
+# Turnos y márgenes de tolerancia
 turnos = {
     "07:00": ("07:06", "07:40"),
     "08:00": ("08:06", "08:40"),
@@ -30,7 +70,7 @@ turnos = {
     "19:00": ("19:06", "19:40"),
 }
 
-# Función para identificar turno
+# Detectar franja de entrada
 def identificar_turno(hora):
     for inicio_str, (inicio, fin) in turnos.items():
         h_inicio = datetime.strptime(inicio, "%H:%M").time()
@@ -39,7 +79,7 @@ def identificar_turno(hora):
             return inicio_str, h_inicio
     return None, None
 
-# Función para aplicar colores al estado
+# Colorear la columna de Estado
 def resaltar_estado(val):
     color = ""
     if val == "Temprano":
@@ -52,7 +92,7 @@ def resaltar_estado(val):
         color = "background-color: lightgray"
     return color
 
-# Procesamiento del archivo
+# Procesar el archivo
 if archivo:
     try:
         df = pd.read_excel(archivo)
@@ -75,7 +115,6 @@ if archivo:
                     estado = "A tiempo"
                 else:
                     estado = "Tarde"
-
                 resultado.append({
                     "Nombre": nombre,
                     "Fecha": row['Fecha'],
@@ -86,7 +125,7 @@ if archivo:
 
         resultado_df = pd.DataFrame(resultado)
 
-        # Buscar personas sin primer registro
+        # Ver quién no tiene registro
         nombres_todos = df['Nombre'].dropna().unique()
         nombres_con_llegada = resultado_df['Nombre'].unique()
         nombres_sin_llegada = set(nombres_todos) - set(nombres_con_llegada)
@@ -103,15 +142,17 @@ if archivo:
             })
 
         faltantes_df = pd.DataFrame(faltantes)
+
+        # Unir resultados
         reporte = pd.concat([resultado_df, faltantes_df], ignore_index=True)
         reporte = reporte.sort_values(by=["Fecha", "Nombre"])
 
-        # Mostrar tabla con estilo
+        # Mostrar resultados con color
         st.success("✅ Análisis completado. Aquí tienes los resultados:")
         styled = reporte.style.applymap(resaltar_estado, subset=["Estado"])
         st.dataframe(styled, use_container_width=True)
 
-        # Descargar como Excel
+        # Exportar como Excel
         output = BytesIO()
         reporte.to_excel(output, index=False, engine='openpyxl')
         st.download_button(
