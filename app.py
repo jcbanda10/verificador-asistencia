@@ -31,7 +31,7 @@ st.markdown("""
 # 🖼️ Título con logo alineado a la izquierda usando columnas
 col1, col2 = st.columns([1, 8])
 with col1:
-    st.image("Logo.png", width=60)
+    st.image("Logo.png", width=120)
 with col2:
     st.markdown("<h1 style='color: #0b5394; margin-top: 10px;'>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
 
