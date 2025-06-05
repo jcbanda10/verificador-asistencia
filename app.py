@@ -7,6 +7,7 @@ from io import BytesIO
 st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", layout="centered")
 
 # Estilo personalizado
+"""
 st.markdown("""
     <style>
         .stApp {
@@ -45,6 +46,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+"""
 
 # Título y logo
 st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
