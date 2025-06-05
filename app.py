@@ -42,7 +42,7 @@ st.markdown("""
 # Título y logo
 st.markdown("""
     <div style="display: flex; align-items: center; margin-bottom: 2rem;">
-        <img src="https://raw.githubusercontent.com/tu_usuario/tu_repo/main/Logo.png" width="80" style="margin-right: 20px;">
+        <img src="https://github.com/jcbanda10/verificador-asistencia/main/Logo.png" width="80" style="margin-right: 20px;">
         <h1 style="color: #0b5394;">⏰ Verificador de Llegadas Tarde</h1>
     </div>
 """, unsafe_allow_html=True)
