@@ -20,7 +20,7 @@ st.markdown("""
         }
         .logo-container {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             margin-top: -30px;
             margin-bottom: 30px;
         }
@@ -49,7 +49,7 @@ st.markdown("""
 # Título y logo
 st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("Logo.png", width=280)
+st.image("Logo.png", width=480)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Descripción
