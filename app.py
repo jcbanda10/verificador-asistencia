@@ -10,7 +10,7 @@ st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", 
 st.markdown("""
     <style>
         .stApp {
-            background-color: #ffffff;
+            background-color: #212626;
             font-family: 'Segoe UI', sans-serif;
         }
         h1 {
