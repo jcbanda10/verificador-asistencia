@@ -20,9 +20,9 @@ st.markdown("""
         }
         .logo-container {
             display: flex;
-            justify-content: center;
-            margin-top: -20px;
-            margin-bottom: 20px;
+            justify-content: space-around;
+            margin-top: -30px;
+            margin-bottom: 30px;
         }
         .stButton>button {
             background-color: #0b5394;
@@ -41,7 +41,7 @@ st.markdown("""
             background-color: #f3f7fc;
         }
         .stDataFrame {
-            background-color: #ffffff;
+            background-color: #080707;
         }
     </style>
 """, unsafe_allow_html=True)
