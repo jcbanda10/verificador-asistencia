@@ -6,14 +6,9 @@ from io import BytesIO
 # Configuración general de la app
 st.set_page_config(page_title="Verificador de Llegadas Tarde", page_icon="⏰", layout="centered")
 
-# Estilo personalizado
-"""
+# Estilo personalizado (sin fondo blanco)
 st.markdown("""
     <style>
-        .stApp {
-            background-color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-        }
         h1 {
             color: #0b5394;
             text-align: center;
@@ -41,17 +36,13 @@ st.markdown("""
             padding: 1em;
             background-color: #f3f7fc;
         }
-        .stDataFrame {
-            background-color: #ffffff;
-        }
     </style>
 """, unsafe_allow_html=True)
-"""
 
 # Título y logo
 st.markdown("<h1>⏰ Verificador de Llegadas Tarde</h1>", unsafe_allow_html=True)
 st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-st.image("Logo.png", width=180)
+st.image("logo.png", width=180)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Descripción
